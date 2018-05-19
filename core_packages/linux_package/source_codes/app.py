@@ -5,6 +5,8 @@ from sys import exit
 import subprocess
 import pydot
 import graphviz
+import os
+
 
 def my_output():
 	f = open("RE.txt", "r")
@@ -15,7 +17,7 @@ def my_output():
 	tree.set_node_defaults(shape='record')
 	f.close()
 	f = open("followpos.txt", "r")
-	arr = map(int, f.readline().split())
+	arr = list(map(int, f.readline().split()))
 	followpos_c = arr[0]
 	followpos = []
 	for i in range(followpos_c):
@@ -96,7 +98,7 @@ def my_output():
 	#Creating DFA********************************************************************
 	f = open("dfa.txt", "r")
 	#Reading Tranisition Table from File
-	arr = map(int, f.readline().split())
+	arr = list(map(int, f.readline().split()))
 	row_c = arr[0]
 	column_c = arr[1]
 	fstate_c = arr[2]
@@ -141,15 +143,14 @@ def my_output():
 		        #k=int(transition_table[i][j])-1
 		        k=states.index(transition_table[i][j])
 		        graph.add_edge(pydot.Edge(node_list[i],node_list[k], label=symbols[j], labelfontcolor="#109933", fontsize="10",color="black"))
-
 	graph.write_svg('DFA.svg')
 	subprocess.call(["xdg-open","Stree.svg"])
 	subprocess.call(["xdg-open","DFA.svg"])
 #***************************************************************************************************************
 top = Tkinter.Tk()
 top.title("RE to DFA Coverter")
-top.geometry("550x200")
-
+top.geometry("520x110")
+top.resizable(False, False)
 image2 =Image.open('l.jpg')
 image1 = ImageTk.PhotoImage(image2)
 background_label = Tkinter.Label(top, image=image1)
@@ -159,33 +160,46 @@ helv10 = tkFont.Font(family="Arial",size=10,weight="bold")
 helv12 = tkFont.Font(family="Arial",size=14)
 
 L1 = Tkinter.Label(top, text="Regular Expression:",fg="BLACK",bg="WHITE")
-L1.pack(side="left",fill="x",padx=10, anchor="center",expand=True)
+#L1.pack(side="left",fill="x",padx=20, pady=50,anchor="center",expand=True)
+L1.grid(row=1, column=0,sticky=(Tkinter.E), padx=5, pady=5)
 #L1.place(x=0, y=0, relx=0.1, rely=0.5, anchor="center")
 
-E1 = Tkinter.Entry(top,bd=0,relief="flat",font=helv12)
-#E1.place(x=0, y=0, relx=0.5, rely=0.5, anchor="center")
-E1.pack(side="left",fill="x", ipady=3, padx=3, anchor="center",expand=True)
-E1.focus_set()
+L1.grid_rowconfigure(1,pad=100)
+L1.grid_columnconfigure(0,pad=100)
 
+entryText = Tkinter.StringVar()
+E1 = Tkinter.Entry(top,bd=0,relief="flat",font=helv12)
+entryText.set( "Status Ready.." )
+#E1.place(x=0, y=0, relx=0.5, rely=0.5, anchor="center")
+#E1.pack(side="left",fill="x", ipady=5, padx=20, anchor="center",expand=True)
+E1.grid(row=1, column=1, padx=20, pady=20)
+E1.focus_set()
+E1.grid_columnconfigure(1,pad=200)
+
+L2 = Tkinter.Label(top, textvariable=entryText, fg="BLACK",bg="WHITE")
+L2.grid(row=2, column=2,sticky=(Tkinter.W), padx=5, pady=5)
+L2.grid_columnconfigure(2,pad=200)
 def callback():
 	#print E1.get()
+	entryText.set( "Processing.." )
+	top.update()
 	s=E1.get()
 	#subprocess.call(["gcc", "hello_world.cpp"])
 	tmp=subprocess.call(["./converter",s])
 	#print "printing result"
 	#print tmp
 	if(tmp!=1):
-		print('Error!!')
-		exit()
-	my_output()
-	subprocess.call(["rm","stree.txt"])
-	subprocess.call(["rm","dfa.txt"])
-	subprocess.call(["rm","RE.txt"])
-	subprocess.call(["rm","followpos.txt"])
+		entryText.set( "Error, Try Again.." )
+		top.update()
+	else:
+		my_output()
+		entryText.set( "Status Ready.." )
+		top.update()
     
     
 B4 = Tkinter.Button(top, text ="Generate DFA", anchor="center",relief="flat", bd=1,
                     command=callback,activebackground="#FFBA75",font=helv10)
-B4.pack(side="left",fill="x",padx=12, anchor="center",expand=True)
+#B4.pack(side="right",fill="x",padx=20, pady=10,anchor="center",expand=True)
+B4.grid(row=1, column=2,sticky=(Tkinter.N, Tkinter.W, Tkinter.E, Tkinter.S), padx=5, pady=5)
 #B4.place(x=0, y=0, relx=0.9, rely=0.5, anchor="center")
 top.mainloop()

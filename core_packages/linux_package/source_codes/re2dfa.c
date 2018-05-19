@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#define MAX 10000
+#define MAX 1000
 
 //tokenise=============================================================================================================
 struct tokenNode
@@ -187,7 +186,7 @@ int normalizeRE(char *re)
 
 		if(!(re[i]=='*'||re[i]=='|'||re[i]==' '||re[i]=='+'||re[i]=='('||re[i]==')'||isalpha(re[i])||re[i]=='#'))
 		{
-			//printf("Stray operator/symbol '%c' at %d!\n",re[i],i+1);
+			printf("Stray operator/symbol '%c' at %d!\n",re[i],i+1);
 			return 1;
 		}
 	}
@@ -197,7 +196,7 @@ int normalizeRE(char *re)
 	{
 		if(((re[i]=='*'||re[i]=='|'||re[i]=='+'||re[i]=='#')&&(re[i] == re[i+1]))||(re[i]=='*'&&re[i+1]=='+')||(re[i]=='+'&&re[i+1]=='*'))
 		{
-			//printf("Wrongly repeated operator '%c' at %d!\n",re[i],i+1);
+			printf("Wrongly repeated operator '%c' at %d!\n",re[i],i+1);
 			return 1;
 		}
 	}
@@ -216,7 +215,7 @@ int normalizeRE(char *re)
 				top--;
 			else
 			{
-				//printf("Parenthesis not matching at %d!\n",i+1);
+				printf("Parenthesis not matching at %d!\n",i+1);
 				return 1;
 			}
 		}
@@ -224,7 +223,7 @@ int normalizeRE(char *re)
 
 	if(top!=0)
 	{
-		//printf("Parenthesis not matching!\n");
+		printf("Parenthesis not matching!\n");
 		return 1;
 	}
 	return 0;
@@ -516,29 +515,29 @@ void printTokenArray(struct tokenArray *arr)
 		return;
 
 	int i;
-	//printf("\n");
-	//printf("\n No.of.Tokens :\t%d\n\n ",arr->tokenCount);
+	printf("\n");
+	printf("\n No.of.Tokens :\t%d\n\n ",arr->tokenCount);
 	for(i=0;i<arr->tokenCount;i++)
 	{
-		//printf("\n");
-		//printf("Symbol 1: %c\n",arr->list[i].symbol1);
-		//printf("Operator: %c\n",arr->list[i].op);
-		//printf("Symbol 2: %c\n",arr->list[i].symbol2);
+		printf("\n");
+		printf("Symbol 1: %c\n",arr->list[i].symbol1);
+		printf("Operator: %c\n",arr->list[i].op);
+		printf("Symbol 2: %c\n",arr->list[i].symbol2);
 		if(arr->list[i].littleArray1!=NULL)
 		{
-			//printf("little arr1 present\n");
-			//printf("\n  ****************************\n");
+			printf("little arr1 present\n");
+			printf("\n  ****************************\n");
 			printTokenArray(arr->list[i].littleArray1);
-			//printf("\n  ****************************\n");
+			printf("\n  ****************************\n");
 		}
 		if(arr->list[i].littleArray2!=NULL)
 		{
-			//printf("little arr2 present\n");
-			//printf("\n ****************************\n");
+			printf("little arr2 present\n");
+			printf("\n ****************************\n");
 			printTokenArray(arr->list[i].littleArray2);
-			//printf("\n ****************************\n");
+			printf("\n ****************************\n");
 		}
-	//printf("\n-------------------------------------\n");
+	printf("\n-------------------------------------\n");
 	}
 }
 
@@ -902,27 +901,31 @@ void printSyntaxTree(struct syntaxNode *synRoot)
 	//print recursivly with vlr rule with addresses
 	if(synRoot==NULL)
 		return;
-	//printf("\n=================================\n");
-	//printf("\nAddress: %ld",(long int)(synRoot));
-	//printf("\nData: %c",synRoot->data);
-	//printf("\nNullable: %d",synRoot->nullable);
-	//printf("\nFirstpos Length: %d",synRoot->firstpos.poscount);
-	//printf("\nFirstpos: ");
+	printf("\n=================================\n");
+	printf("\nAddress: %ld",(long int)(synRoot));
+	printf("\nData: %c",synRoot->data);
+	printf("\nNullable: %d",synRoot->nullable);
+	printf("\nFirstpos Length: %d",synRoot->firstpos.poscount);
+	printf("\nFirstpos: ");
 	for(i=0;i<synRoot->firstpos.poscount;i++)
-		//printf("%d,",synRoot->firstpos.poslist[i]);
-	//printf("\nLastpos Length: %d",synRoot->lastpos.poscount);
-	//printf("\nLastpos: ");
+		printf("%d,",synRoot->firstpos.poslist[i]);
+	printf("\nLastpos Length: %d",synRoot->lastpos.poscount);
+	printf("\nLastpos: ");
 	for(i=0;i<synRoot->lastpos.poscount;i++)
-		//printf("%d,",synRoot->lastpos.poslist[i]);
+		printf("%d,",synRoot->lastpos.poslist[i]);
 
-	//printf("\nLeft child: %ld",(long int)(synRoot->leftchild));
-	//printf("\nRight child: %ld",(long int)(synRoot->rightchild));
+	printf("\nLeft child: %ld",(long int)(synRoot->leftchild));
+	printf("\nRight child: %ld",(long int)(synRoot->rightchild));
 
-	//printf("\n=================================\n");
+	printf("\n=================================\n");
 
 	printSyntaxTree(synRoot->leftchild);
 	printSyntaxTree(synRoot->rightchild);
+
+
 }
+
+
 
 void saveSyntaxTreeRecursive(struct syntaxNode *synRoot, FILE *fpsyntax)
 {
@@ -1098,8 +1101,7 @@ void printSymbolTable(char *st, int symbolcount)
 {
 	int i;
 	printf("\n-----------SYMBOL TABLE: \n");
-	for( i = 1; i <= symbolcount; i++ ) 
-		printf("[%c,%d]  ", st[i], i);
+	for( i = 1; i <= symbolcount; i++ ) printf("[%c,%d]  ", st[i], i);
 	printf("\n-----------------------------------------------------\n");
 }
 
@@ -1109,31 +1111,24 @@ void printDFA(int symbolcount, int no_of_inputs, char *input, int _new_states)
 	symbolcount *= 3;
 
 	printf("\n--------------------DFA TABLE:\n");
-	for( i = 1; i <= symbolcount; i++ ) 
-		printf(" ");
-	for( i = 1; i <= no_of_inputs; i++ )
-	{
+	for( i = 1; i <= symbolcount; i++ ) printf(" ");
+	for( i = 1; i <= no_of_inputs; i++ ){
 		printf("|");
-		for( j = 1; j <= symbolcount/2; j++ )
-			printf(" ");
+		for( j = 1; j <= symbolcount/2; j++ ) printf(" ");
 		printf("%c", input[i-1]);
-		for( j = 1; j <= symbolcount/2 - 1; j++ )
-			printf(" "); 
+		for( j = 1; j <= symbolcount/2 - 1; j++ ) printf(" "); 
 	}
 	printf("\n");
 
-	for( i = 1; i <= (symbolcount*no_of_inputs); i++ )
-		printf("++");
+	for( i = 1; i <= (symbolcount*no_of_inputs); i++ ) printf("++");
 	printf("\n");
 	
 	for( i = 1; i <= _new_states; i++ ){
 		for( j = 0; j <= no_of_inputs; j++ ){
-				printf("[");
-			for( k = 1; k <= t_symbocount; k++ )
-				printf("%d,", dfa[i][j].set[k]);
+			printf("[");
+			for( k = 1; k <= t_symbocount; k++ ) printf("%d,", dfa[i][j].set[k]);
 			printf("]");
-			for( k = 1; k <= (symbolcount - 2*t_symbocount)-2; k++ )
-				printf(" ");
+			for( k = 1; k <= (symbolcount - 2*t_symbocount)-2; k++ ) printf(" ");
 			printf("|");
 		}
 		printf("\n");
@@ -1145,26 +1140,23 @@ void printMappedDFA(int new_states, int no_of_inputs, int symbolcount, char *inp
 {
 	int i, j, k;
 
-	//printf("\n--------------------DFA TABLE:\n");
-	//printf("   ");
-	for( i = 1; i <= no_of_inputs; i++ )
-	{
-		//printf("| %c ", inputs[i-1]);
+	printf("\n--------------------DFA TABLE:\n");
+	printf("   ");
+	for( i = 1; i <= no_of_inputs; i++ ){
+		printf("| %c ", inputs[i-1]);
 	}
-	//printf("\n");
+	printf("\n");
 
-	for( i = 1; i <= 4*no_of_inputs; i++ ) //printf("++");
-	//printf("\n");
+	for( i = 1; i <= 4*no_of_inputs; i++ ) printf("++");
+	printf("\n");
 
-	for( i = 1; i <= new_states; i++ )
-	{
-		for( j = 0; j <= no_of_inputs; j++ )
-		{
-			//printf("%c  |", dfa[i][j].state);
+	for( i = 1; i <= new_states; i++ ){
+		for( j = 0; j <= no_of_inputs; j++ ){
+			printf("%c  |", dfa[i][j].state);
 		}
-		//printf("\n");
+		printf("\n");
 	}
-	//printf("\n---------------------------------------------------------\n");
+	printf("\n---------------------------------------------------------\n");
 }
 
 //an utility function, will be used in transition matrix calculation...
@@ -1251,33 +1243,24 @@ void mapDFA(int symbolcount, int no_of_inputs, int new_states)
 	int i, j, k, t;
 	char input = 'A';
 
-	for( i = 1; i <= new_states; i++ ) 
-		dfa[i][0].state = input++;
+	for( i = 1; i <= new_states; i++ ) dfa[i][0].state = input++;
 
-	//printf("\n--------------------MAPPED STATES: \n");
-	for( i = 1; i <= new_states; i++ )
-	{
-		//printf(" %c = {", dfa[i][0].state);
-		/*for( j = 1; j <= symbolcount; j++ )
-		{
-			if( dfa[i][0].set[j] == 1 ) 
-				printf("%d,", j);
+	printf("\n--------------------MAPPED STATES: \n");
+	for( i = 1; i <= new_states; i++ ){
+		printf(" %c = {", dfa[i][0].state);
+		for( j = 1; j <= symbolcount; j++ ){
+			if( dfa[i][0].set[j] == 1 ) printf("%d,", j);
 		}
-		printf("} ");*/
+		printf("} ");
 	}
-	//printf("\n---------------------------------------------------------\n");
+	printf("\n---------------------------------------------------------\n");
 
-	for( i = 1; i <= new_states; i++ )
-	{
-		for( j = 1; j <= no_of_inputs; j++ )
-		{
-			for( k = 1; k <= new_states; k++ )
-			{
+	for( i = 1; i <= new_states; i++ ){
+		for( j = 1; j <= no_of_inputs; j++ ){
+			for( k = 1; k <= new_states; k++ ){
 				t = isSame(dfa[i][j].set, dfa[k][0].set, symbolcount);
-				if( t == -1 ) 
-					dfa[i][j].state = '_';
-				else if( t == 1 )
-				{
+				if( t == -1 ) dfa[i][j].state = '_';
+				else if( t == 1 ){
 					dfa[i][j].state = dfa[k][0].state;
 					break;
 				}
@@ -1400,18 +1383,20 @@ void calculateTransitionTable(struct syntaxNode *root, char *st, int symbolcount
 
 	mapDFA(symbolcount, no_of_inputs, (*ns));
 	//printDFA(symbolcount, no_of_inputs, input, (*ns));
-	//printMappedDFA((*ns), no_of_inputs, symbolcount, input);
+	printMappedDFA((*ns), no_of_inputs, symbolcount, input);
 	int final_state_count = 0;
 	char *final_states = markFinal(&final_state_count, (*ns), symbolcount);
 
-	//printf("\n----final states: ");
-	for( i = 0; i < final_state_count; i++ ) //printf("%c ", final_states[i]);
-	//printf("\n------------------------------------\n");
+	printf("\n----final states: ");
+	for( i = 0; i < final_state_count; i++ ) printf("%c ", final_states[i]);
+	printf("\n------------------------------------\n");
 
 	saveDFA((*ns), no_of_inputs, final_state_count, input, final_states);
 }
 //transition table calculation end=====================================================================================================
 
+
+// Main Function
 int main(int argc, char *argv[])
 {
 	int i;
@@ -1424,13 +1409,10 @@ int main(int argc, char *argv[])
   
 		return -2;
 	}
-	
 	char REstring[MAX];
 	strcpy(REstring,argv[1]);
-	/*//printf("\nSupported Characters: \n'a-d','f-z','A-Z',\n'e' for epsilon, '*','|','(',')'\n");
-	//printf("\n\tEnter RE: ");
-	scanf("%[^\n]",REstring);
-	//printf("The RE entered:\n'%s'\n",REstring);*/
+	printf("\nSupported Characters: \n'a-d','f-z','A-Z',\n'e' for epsilon, '*','|','(',')'\n");
+	printf("The RE entered:\n'%s'\n",REstring);
 
 	int new_states = 0;
 	char *st;
@@ -1442,23 +1424,23 @@ int main(int argc, char *argv[])
 
 	if(normalizeRE(REstring))
 	{
-		//printf("\nWrong Regular Expression! Program Terminated!\n");
+		printf("\nWrong Regular Expression! Program Terminated!\n");
 		return -1;
 	}
+	printf("The normalized RE:\n'%s'\n",REstring);
 	FILE *fpb=fopen("RE.txt","w");
 	fprintf(fpb,"%s",REstring);
-	fclose(fpb);
 	symbolcount = countSymbols(REstring, &uniqueSymbolCount,uniqueSymbols);
-	//printf("The number of symbols is: %d\n",symbolcount);
+	printf("The number of symbols is: %d\n",symbolcount);
 
 	if(symbolcount<=1)
 	{
-		//printf("\nRE empty!! Program Terminated!\n");
+		printf("\nRE empty!! Program Terminated!\n");
 		return 0;
 	}
 	
 	MainTokenArray = parseAndStoreTokens(REstring);
-	//printf("\nThe tokenised array:\n");
+	printf("\nThe tokenised array:\n");
 	printTokenArray(MainTokenArray);
 	
 	syntaxRoot = syntaxTreeBuilder(MainTokenArray,&symbolcountcurr,symbolcount);
@@ -1468,9 +1450,9 @@ int main(int argc, char *argv[])
 
 	st = initSymbolArray(symbolcount);
 	constructSymbolTable(syntaxRoot, st);
-	//printSymbolTable(st, symbolcount);
+	printSymbolTable(st, symbolcount);
 
-	//printSyntaxTree(syntaxRoot);
+	printSyntaxTree(syntaxRoot);
 
 	fp = initFollowposMatrix(symbolcount);
 	calculateFollowpos(syntaxRoot, symbolcount, fp);
